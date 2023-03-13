@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/ghost_to_jekyll'
+
+# Retrieve the JSON
+#
+# Usage:
+# Providing a JSON file - ruby ghost_to_jekyll.rb --file backup.json
+#
+
+@options = {}
+@next_arg = nil
+
+ARGV.each do |arg|
+  case arg
+  when '--file', '-f'
+    @next_arg = :file
+  else
+    if @next_arg
+      @options[@next_arg] = arg
+    end
+    @next_arg = nil
+  end
+end
+
+ghost_to_jekyll = GhostToJekyll::GhostToJekyll.new(@options)
+
+if ghost_to_jekyll.file_not_supplied?
+  p 'please specify a file'
+  exit
+end
+
+ghost_to_jekyll.convert
+
