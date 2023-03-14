@@ -6,3 +6,5 @@ source "https://rubygems.org"
 
 gem "kramdown", "~> 2.4"
 gem "json", "~> 2.6"
+
+gem "rspec", "~> 3.12"
