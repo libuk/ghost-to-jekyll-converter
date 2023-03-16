@@ -1,3 +1,4 @@
+require 'fileutils'
 require_relative 'ghost_to_jekyll/converter'
 require_relative 'ghost_to_jekyll/ghost_post'
 require_relative 'ghost_to_jekyll/jekyll_formatter'
@@ -52,7 +53,7 @@ module GhostToJekyll
     end
 
     def kramdown(html:, title:)
-      @kramdown ||= Converter.new(html: html, post_title: title).convert
+      @kramdown = Converter.new(html: html, post_title: title).convert
     end
 
     def formatter(post)
@@ -60,25 +61,26 @@ module GhostToJekyll
     end
 
     def create_dir
-      @converted_post_dir = 'converted_posts'
+      @converted_post_dir = "#{Dir.home}/ghost-to-jekyll/converted_posts"
 
-      Dir.mkdir(@converted_post_dir)
+      FileUtils.remove_dir(@converted_post_dir, force: true)
+      FileUtils.mkdir_p(@converted_post_dir)
     end
 
     def converted_file_path(filename)
-      @converted_file_path = "./#{@converted_post_dir}/#{filename}"
+      @converted_file_path = "#{@converted_post_dir}/#{filename}"
     end
 
     def posts
       @json[:db][0][:data][:posts]
     end
 
-    def file_path
-      "./#{config[:file]}"
+    def json_file_path
+      config[:file]
     end
 
     def parse_json
-      parser = JSONParser.new(file_path)
+      parser = JSONParser.new(json_file_path)
 
       begin
         @json = parser.parse!
