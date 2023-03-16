@@ -2,6 +2,24 @@
 
 Convert ghost posts to markdown files ready to use with Jekyll.
 
+Turns this
+
+```html
+<h1>Blog Title</h1><p>Blog content.</p>
+```
+
+Into a file called `2023-01-15-blog-title.md` containing this
+
+```markdown
+---
+title: Blog Title
+---
+
+# Blog Title
+
+Blog content.
+```
+
 ## Installation
 
 ### Docker
@@ -14,7 +32,7 @@ docker build -t ghost-to-jekyll .
 
 ### Manual
 
-[Install `ruby v3.1`](https://www.ruby-lang.org/en/documentation/installation/).
+[Install `ruby v3.1.3`](https://www.ruby-lang.org/en/documentation/installation/) manually or using a ruby version manager like [rbenv](https://github.com/rbenv/rbenv).
 
 Install dependencies.
 
@@ -24,9 +42,17 @@ bundle install
 
 ## Usage
 
-1. Export your Ghost content using a web browser or the CLI. More info available [here](https://ghost.org/help/the-importer/#exports-in-ghost).
+Export your Ghost content using a web browser or the CLI. More info available [here](https://ghost.org/help/the-importer/#exports-in-ghost).
 
-2. Paste the JSON data into the file `backup.json`
+Then run `ruby bin/ghost_to_jekyll -f <path-to-backup-file>.json` or for Docker
 
-3. Run `ruby ghost_to_jekyll.rb` or `docker run --name g-to-j -t ghost-to-jekyll`
+```sh
+docker run -v <volume-name>:/root/ghost-to-jekyll/converted_posts ghost-to-jekyll -f <path-to-backup-file>.json
+```
+
+### Converted files location
+
+When running locally without Docker, files are saved to your home directory `$HOME/ghost-to-jekyll/converted_posts`.
+
+When running with Docker the converted files will be saved to the volume which you specify. To learn more about how volumes work in Docker, [visit](https://docs.docker.com/storage/volumes/).
 
