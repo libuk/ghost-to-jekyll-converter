@@ -2,9 +2,9 @@ FROM ruby:3.1-buster as ruby
 
 RUN gem update --system && gem install json && gem install kramdown && gem cleanup
 
-WORKDIR /src
+WORKDIR /usr/local
 
 COPY . .
 
-CMD ["ruby", "ghost_to_jekyll.rb"]
+ENTRYPOINT ["ruby", "./bin/ghost_to_jekyll"]
 
