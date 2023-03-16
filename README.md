@@ -54,5 +54,5 @@ docker run -v <volume-name>:/root/ghost-to-jekyll/converted_posts ghost-to-jekyl
 
 When running locally without Docker, files are saved to your home directory `$HOME/ghost-to-jekyll/converted_posts`.
 
-When running with Docker the converted files will be saved to the volume which you specify. To learn more about how volumes work in Docker, [visit](https://docs.docker.com/storage/volumes/).
+When running with Docker the converted files will be saved to the volume which you specify. To learn more about how volumes work in Docker [go here](https://docs.docker.com/storage/volumes/).
 
