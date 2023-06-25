@@ -1,7 +1,6 @@
 require 'fileutils'
+require 'date'
 require_relative 'ghost_to_jekyll/converter'
-require_relative 'ghost_to_jekyll/ghost_post'
-require_relative 'ghost_to_jekyll/jekyll_formatter'
 require_relative 'ghost_to_jekyll/json_parser'
 
 module GhostToJekyll
@@ -28,16 +27,15 @@ module GhostToJekyll
 
     def convert_posts
       posts.each do |post|
-        ghost_post = GhostPost.new(post)
+        next unless post[:html] && post[:status] == 'published'
 
-        next unless ghost_post.html && ghost_post.published?
+        p "processing post: #{post[:title]}"
 
-        title = ghost_post.title
+        formatted_date = DateTime.parse(post[:published_at]).strftime('%Y-%m-%d')
+        filename = "#{formatted_date}-#{post[:slug]}.md"
+        file_path = "#{@converted_post_dir}/#{filename}"
 
-        p "processing post: #{title}"
-
-        file_path = converted_file_path(formatter(ghost_post).post_filename)
-        data = kramdown(html: ghost_post.html, title: ghost_post.title)
+        data = Converter.new(html: post[:html], post_title: post[:title]).convert
 
         begin
           File.open(file_path, 'w') do |file|
@@ -48,16 +46,8 @@ module GhostToJekyll
           exit
         end
 
-        p "File created #{@converted_file_path}"
+        p "File created #{file_path}"
       end
-    end
-
-    def kramdown(html:, title:)
-      @kramdown = Converter.new(html: html, post_title: title).convert
-    end
-
-    def formatter(post)
-      @formatter = JekyllFormatter.new(date: post.published_at, slug: post.slug)
     end
 
     def create_dir
@@ -65,10 +55,6 @@ module GhostToJekyll
 
       FileUtils.remove_dir(@converted_post_dir, force: true)
       FileUtils.mkdir_p(@converted_post_dir)
-    end
-
-    def converted_file_path(filename)
-      @converted_file_path = "#{@converted_post_dir}/#{filename}"
     end
 
     def posts
